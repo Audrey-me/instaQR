@@ -101,7 +101,7 @@ async def generate_qr_image(file: UploadFile):
         # Generate the public URL for the uploaded image
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
 
-        # Generate a QR code for the URL
+        
         # Generate a QR code for the URL
         qr = qrcode.QRCode(
             version=1,
