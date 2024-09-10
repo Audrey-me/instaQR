@@ -21,12 +21,23 @@ bucket_name = "qr-codes-generator"
 
 def create_bucket(bucket_name):
     try:
-        s3.create_bucket(Bucket=bucket_name, CreateBucketConfiguration={
-            'LocationConstraint': 'us-west-2'})  # Use your region
-        print(f"Bucket {bucket_name} created successfully.")
+        # Check if the bucket already exists
+        s3.head_bucket(Bucket=bucket_name)
+        print(f"Bucket {bucket_name} already exists. Using the existing bucket.")
     except ClientError as e:
-        print(f"Error creating bucket: {e}")
-
+        # If a 404 error is thrown, the bucket does not exist
+        if e.response['Error']['Code'] == '404':
+            try:
+                # Create a new bucket
+                s3.create_bucket(
+                    Bucket=bucket_name,
+                    CreateBucketConfiguration={'LocationConstraint': 'us-west-2'}  # Use your region
+                )
+                print(f"Bucket {bucket_name} created successfully.")
+            except ClientError as create_error:
+                print(f"Error creating bucket: {create_error}")
+        else:
+            print(f"Error accessing bucket: {e}")
 
 app = FastAPI()
 

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: multi-container-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: multi-container
+  template:
+    metadata:
+      labels:
+        app: multi-container
+    spec:
+      containers:
+      - name: frontend-container
+        image: 434514414684.dkr.ecr.us-west-2.amazonaws.com/insta-frontend
+        ports:
+        - containerPort: 3000
+      - name: backend-container
+        image: 434514414684.dkr.ecr.us-west-2.amazonaws.com/insta-backend:latest
+        ports:
+        - containerPort: 8000
