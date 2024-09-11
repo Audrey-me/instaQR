@@ -1,3 +1,4 @@
+
 name: ECR Build and Deploy to EKS
 
 on:
@@ -43,7 +44,9 @@ jobs:
         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
 
     - name: Set up kubeconfig
-      run: echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
+      run: |
+        mkdir -p $HOME/.kube
+        echo "${{ secrets.KUBECONFIG }}" > $HOME/.kube/config
 
     - name: Deploy to EKS
       run: |
