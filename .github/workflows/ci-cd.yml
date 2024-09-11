@@ -26,13 +26,13 @@ jobs:
 
     - name: Build and Tag Docker Image for Frontend
       run: |
-        docker build -t frontend ./frontend
-        docker tag frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
+        docker build -t insta-frontend ./frontend
+        docker tag insta-frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest
 
     - name: Build and Tag Docker Image for Backend
       run: |
-        docker build -t backend ./backend
-        docker tag backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
+        docker build -t insta-backend ./backend
+        docker tag insta-backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
 
     - name: Push Frontend Image to ECR
       run: |
