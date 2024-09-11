@@ -46,5 +46,5 @@ jobs:
       env:
         KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Your KUBECONFIG to access the EKS cluster
       run: |
-        kubectl set image deployment/frontend-deployment frontend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest --record
-        kubectl set image deployment/backend-deployment backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest --record
+        kubectl set image deployment/frontend-deployment frontend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest --record
+        kubectl set image deployment/backend-deployment backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest --record
