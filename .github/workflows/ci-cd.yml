@@ -1,51 +1,50 @@
-# name: ECR Build and Deploy to EKS
+name: ECR Build and Deploy to EKS
 
-# on:
-#   push:
-#     branches:
-#       - main  # Trigger the workflow when changes are pushed to the main branch
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow when changes are pushed to the main branch
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-#     steps:
-#     - name: Checkout code
-#       uses: actions/checkout@v2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-#     - name: Configure AWS credentials from Secrets
-#       uses: aws-actions/configure-aws-credentials@v1
-#       with:
-#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-#         aws-region: ${{ secrets.AWS_REGION }}
+    - name: Configure AWS credentials from Secrets
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-#     - name: Login to Amazon ECR
-#       run: |
-#         aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+    - name: Login to Amazon ECR
+      run: |
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
-#     - name: Build and Tag Docker Image for Frontend
-#       run: |
-#         docker build -t frontend ./frontend
-#         docker tag frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
+    - name: Build and Tag Docker Image for Frontend
+      run: |
+        docker build -t frontend ./frontend
+        docker tag frontend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
 
-#     - name: Build and Tag Docker Image for Backend
-#       run: |
-#         docker build -t backend ./backend
-#         docker tag backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
+    - name: Build and Tag Docker Image for Backend
+      run: |
+        docker build -t backend ./backend
+        docker tag backend:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
 
-#     - name: Push Frontend Image to ECR
-#       run: |
-#         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
+    - name: Push Frontend Image to ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest
 
-#     - name: Push Backend Image to ECR
-#       run: |
-#         docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
+    - name: Push Backend Image to ECR
+      run: |
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest
 
-#     - name: Deploy to EKS
-#       env:
-#         KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Your KUBECONFIG to access the EKS cluster
-#       run: |
-#         kubectl set image deployment/frontend-deployment frontend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest --record
-#         kubectl set image deployment/backend-deployment backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest --record
-
+    - name: Deploy to EKS
+      env:
+        KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Your KUBECONFIG to access the EKS cluster
+      run: |
+        kubectl set image deployment/frontend-deployment frontend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/frontend:latest --record
+        kubectl set image deployment/backend-deployment backend=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/backend:latest --record

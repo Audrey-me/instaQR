@@ -12,12 +12,15 @@ spec:
       labels:
         app: multi-container
     spec:
+      imagePullSecrets:
+      - name: regcred
       containers:
       - name: frontend-container
-        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-frontend-image:latest
         ports:
         - containerPort: 3000
       - name: backend-container
-        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/your-backend-image:latest
         ports:
         - containerPort: 8000
+
