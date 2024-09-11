@@ -27,11 +27,12 @@ S3_BUCKET_NAME=<replace-with-your-bucketname>
 
 
 3. Orchestration using AWS EKS
-1. Launch a vm so as not to install on your local machine
-2. install aws cli and configure your credentials
-- sudo yum install awscli -y
-- aws configure
-3. install the required tools kubectl(to interact with kubernetes cluster),eksctl(To easily create and manage EKS clusters)
+3.1.  Launch a vm so as not to install on your local machine
+   - install aws cli and configure your credentials
+   - sudo yum install awscli -y
+   - aws configure
+
+- install the required tools kubectl(to interact with kubernetes cluster),eksctl(To easily create and manage EKS clusters)
 - curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.21.2/2021-10-11/bin/linux/amd64/kubectl
 chmod +x ./kubectl
 mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
@@ -44,8 +45,3 @@ sudo mv /tmp/eksctl /usr/local/bin
 
 5. update your cluster to be able to use kubectl
 - aws eks --region us-west-2 update-kubeconfig --name instaQR-eks-cluster
--aws ecr get-login-password --region us-west-2
-- docker login --username AWS --password kosimay_2001 434514414684.dkr.ecr.us-west-2.amazonaws.com
-
-aws ecr get-login-password --region us-west-2 | docker login --username AWS --password-stdin 434514414684.dkr.ecr.us-west-2.amazonaws.com
- 
