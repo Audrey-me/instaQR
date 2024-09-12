@@ -39,7 +39,7 @@ export default function Scan() {
         }
 
       setErrorMessage("");
-      const response = await fetch("http://my-app-service:8000/generate-qr/", 
+      const response = await fetch("http://a95b613f46479496fb3ef74866b371c3-1227183471.us-west-2.elb.amazonaws.com:8000/generate-qr/", 
       {
             method: "POST", 
             headers: {
