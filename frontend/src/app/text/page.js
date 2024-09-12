@@ -17,7 +17,7 @@ const handleGenerateQR = async (type, data) => {
       return;
     }
     setErrorMessage("");
-    const response = await fetch("http://localhost:8000/generate-qr/", 
+    const response = await fetch("http://backend-container:8000/generate-qr/", 
     {
           method: "POST", 
           headers: {
