@@ -1,4 +1,3 @@
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -7,18 +6,20 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: multi-container
+      app: my-app
   template:
     metadata:
       labels:
-        app: multi-container
+        app: my-app
     spec:
       imagePullSecrets:
       - name: regcred
-    
       containers:
         - name: frontend-container
           image: "123456789012.dkr.ecr.us-west-2.amazonaws.com/insta-frontend:latest"
+          ports:
+            - containerPort: 3000  
         - name: backend-container
           image: "123456789012.dkr.ecr.us-west-2.amazonaws.com/insta-backend:latest"
-
+          ports:
+            - containerPort: 8000
