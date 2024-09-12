@@ -16,10 +16,10 @@ spec:
       - name: regcred
       containers:
         - name: frontend-container
-          image: "123456789012.dkr.ecr.us-west-2.amazonaws.com/insta-frontend:latest"
+          image: " ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest"
           ports:
             - containerPort: 3000  
         - name: backend-container
-          image: "123456789012.dkr.ecr.us-west-2.amazonaws.com/insta-backend:latest"
+          image: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest"
           ports:
             - containerPort: 8000
