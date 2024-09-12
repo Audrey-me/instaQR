@@ -56,3 +56,7 @@ jobs:
       run: |
         kubectl config use-context arn:aws:eks:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/instaQR-eks-cluster
         kubectl set image deployment/multi-container-app frontend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest backend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
+
+    - name: Restart deployment
+      run: |
+        kubectl rollout restart deployment 
