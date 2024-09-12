@@ -39,7 +39,7 @@ export default function Scan() {
         }
 
       setErrorMessage("");
-      const response = await fetch("http://localhost:8000/generate-qr/", 
+      const response = await fetch("http://my-app-service:8000/generate-qr/", 
       {
             method: "POST", 
             headers: {

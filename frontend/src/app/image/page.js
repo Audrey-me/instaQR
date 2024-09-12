@@ -20,7 +20,7 @@ export default function Scan() {
     formData.append('file', imageData);
 
     try {
-      const response = await fetch('http://localhost:8000/generate-qr-image/', {
+      const response = await fetch('http://my-app-service:8000/generate-qr-image/', {
         method: 'POST',
         body: formData,
       });
