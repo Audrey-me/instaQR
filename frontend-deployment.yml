@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: multi-container-app
+  name: frontend-deployment
 spec:
   replicas: 1
   selector:
@@ -18,8 +18,4 @@ spec:
         - name: frontend-container
           image: " ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest"
           ports:
-            - containerPort: 3000  
-        - name: backend-container
-          image: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest"
-          ports:
-            - containerPort: 8000
+            - containerPort: 3000

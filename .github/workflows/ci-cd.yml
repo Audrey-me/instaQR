@@ -52,7 +52,20 @@ jobs:
       run: |
         aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name instaQR-eks-cluster
 
-    - name: Deploy to EKS
+    - name: Deploy Frontend to EKS
       run: |
         kubectl config use-context arn:aws:eks:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/instaQR-eks-cluster
-        kubectl set image deployment/multi-container-app frontend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest backend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
+        kubectl set image deployment/frontend-deployment frontend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-frontend:latest
+
+    - name: Deploy Backend to EKS
+      run: |
+        kubectl config use-context arn:aws:eks:${{ secrets.AWS_REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/instaQR-eks-cluster
+        kubectl set image deployment/backend-deployment backend-container=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest
+
+    - name: Restart Frontend Deployment
+      run: |
+        kubectl rollout restart deployment/frontend-deployment
+
+    - name: Restart Backend Deployment
+      run: |
+        kubectl rollout restart deployment/backend-deployment
