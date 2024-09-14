@@ -17,7 +17,7 @@ const handleGenerateQR = async (type, data) => {
       return;
     }
     setErrorMessage("");
-    const response = await fetch("http://backend-service:8000/generate-qr/", 
+    const response = await fetch('/api/proxy', 
     {
           method: "POST", 
           headers: {
