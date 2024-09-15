@@ -6,6 +6,10 @@ module.exports = {
         source: '/api/proxy',
         destination: 'http://backend-service:8000/generate-qr/',
       },
+      {
+       	source: '/api/proxy-image',
+        destination: 'http://backend-service:8000/generate-qr-image/',
+      },
     ];
   },
 };

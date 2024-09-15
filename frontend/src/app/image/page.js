@@ -20,7 +20,7 @@ export default function Scan() {
     formData.append('file', imageData);
 
     try {
-      const response = await fetch('http://a95b613f46479496fb3ef74866b371c3-1227183471.us-west-2.elb.amazonaws.com:8000/generate-qr-image/', {
+      const response = await fetch('/api/proxy-image', {
         method: 'POST',
         body: formData,
       });
