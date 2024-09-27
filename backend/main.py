@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, Form, HTTPException
 from botocore.exceptions import NoCredentialsError, ClientError
 from fastapi.responses import JSONResponse
+from prometheus_client import Counter, generate_latest
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -49,6 +50,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Prometheus metrics
+REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests', ['method', 'endpoint'])
+
+# Middleware to track requests
+@app.middleware("http")
+async def track_requests(request, call_next):
+    response = await call_next(request)
+    REQUEST_COUNT.labels(method=request.method, endpoint=request.url.path).inc()  # Increment the counter
+    return response
+
+# Endpoint for metrics
+@app.get("/metrics")
+async def metrics():
+    return generate_latest()
+
 # Pydantic model for text, email, and URL input
 class QRCodeData(BaseModel):
     data_type: str
@@ -86,7 +102,6 @@ async def generate_qr(data: QRCodeData):
         print(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
 # Endpoint for generating QR code from images
 @app.post("/generate-qr-image/")
 async def generate_qr_image(file: UploadFile):
@@ -112,7 +127,6 @@ async def generate_qr_image(file: UploadFile):
         # Generate the public URL for the uploaded image
         s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
 
-        
         # Generate a QR code for the URL
         qr = qrcode.QRCode(
             version=1,
