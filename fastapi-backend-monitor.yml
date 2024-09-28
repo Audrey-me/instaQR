@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: fastapi-backend-monitor
+  namespace: monitoring  # Ensure it's set to the monitoring namespace
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  endpoints:
+  - port: http
+    targetPort: 8000
+    path: /metrics
+    interval: 15s
+    scrapeTimeout: 10s

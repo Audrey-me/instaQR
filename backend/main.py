@@ -1,4 +1,3 @@
-import qrcode
 import uvicorn
 import io
 import os
@@ -29,6 +28,7 @@ def create_bucket(bucket_name):
         # If a 404 error is thrown, the bucket does not exist
         if e.response['Error']['Code'] == '404':
             try:
+                # Create a new bucket
                 # Create a new bucket
                 s3.create_bucket(
                     Bucket=bucket_name,
@@ -152,3 +152,9 @@ async def generate_qr_image(file: UploadFile):
     
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
+        
+        
+
