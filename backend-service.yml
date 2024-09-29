@@ -9,4 +9,5 @@ spec:
     - protocol: TCP
       port: 8000
       targetPort: 8000
+      name: http   # this must be similar to the service monitor port
   type: ClusterIP

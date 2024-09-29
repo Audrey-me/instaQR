@@ -4,4 +4,4 @@ uvicorn
 python-multipart
 boto3
 python-dotenv
-prometheus_client
+prometheus-fastapi-instrumentator

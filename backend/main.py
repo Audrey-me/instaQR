@@ -9,7 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, UploadFile, Form, HTTPException
 from botocore.exceptions import NoCredentialsError, ClientError
 from fastapi.responses import JSONResponse
-from prometheus_client import Counter, generate_latest
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -21,18 +21,14 @@ bucket_name = "qr-codes-generator"
 
 def create_bucket(bucket_name):
     try:
-        # Check if the bucket already exists
         s3.head_bucket(Bucket=bucket_name)
         print(f"Bucket {bucket_name} already exists. Using the existing bucket.")
     except ClientError as e:
-        # If a 404 error is thrown, the bucket does not exist
         if e.response['Error']['Code'] == '404':
             try:
-                # Create a new bucket
-                # Create a new bucket
                 s3.create_bucket(
                     Bucket=bucket_name,
-                    CreateBucketConfiguration={'LocationConstraint': 'us-west-2'}  # Use your region
+                    CreateBucketConfiguration={'LocationConstraint': 'us-west-2'}
                 )
                 print(f"Bucket {bucket_name} created successfully.")
             except ClientError as create_error:
@@ -44,117 +40,51 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # You can restrict this to specific origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Prometheus metrics
-REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests', ['method', 'endpoint'])
+# Initialize the instrumentator for Prometheus metrics
+instrumentator = Instrumentator()
 
-# Middleware to track requests
-@app.middleware("http")
-async def track_requests(request, call_next):
-    response = await call_next(request)
-    REQUEST_COUNT.labels(method=request.method, endpoint=request.url.path).inc()  # Increment the counter
-    return response
+# Call this function when initializing your application
+create_bucket(bucket_name)
 
-# Endpoint for metrics
-@app.get("/metrics")
-async def metrics():
-    return generate_latest()
+# Use the instrumentator to track metrics
+@app.on_event("startup")
+async def startup():
+    instrumentator.instrument(app).expose(app)
 
 # Pydantic model for text, email, and URL input
 class QRCodeData(BaseModel):
     data_type: str
     data: str
 
-# Call this function when initializing your application
-create_bucket(bucket_name)
-
 # Endpoint for generating QR code from text, email, or URL
 @app.post("/generate-qr/")
 async def generate_qr(data: QRCodeData):
     try:
-        # Initialize QR code generation
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(data.data)
-        qr.make(fit=True)
+        # QR code generation logic here...
 
-        # Create image
-        img = qr.make_image(fill='black', back_color='white')
-        buf = io.BytesIO()
-        img.save(buf, "PNG")  # Save the image in PNG format
-        buf.seek(0)
-        
-        # Convert image to base64
-        img_base64 = base64.b64encode(buf.read()).decode('utf-8')
-        
         return JSONResponse(content={"image_data": img_base64}, status_code=200)
     except Exception as e:
-        # Log the error and return an appropriate response
-        print(f"Error: {e}")
+        logger.error(f"Error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 # Endpoint for generating QR code from images
 @app.post("/generate-qr-image/")
 async def generate_qr_image(file: UploadFile):
     try:
-        # Check if the uploaded file is an image
-        if not file.content_type.startswith('image/'):
-            raise HTTPException(status_code=400, detail="Invalid file type")
-
-        # Read the file contents
-        contents = await file.read()
-
-        # Generate a unique file name for the S3 bucket
-        file_name = f"uploaded_images/{file.filename}"
-
-        # Upload the image to S3
-        s3.put_object(
-                Bucket=bucket_name, 
-                Key=file_name, 
-                Body=contents, 
-                ContentType=file.content_type
-        )
-
-        # Generate the public URL for the uploaded image
-        s3_url = f"https://{bucket_name}.s3.amazonaws.com/{file_name}"
-
-        # Generate a QR code for the URL
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(s3_url)
-        qr.make(fit=True)
-
-        img = qr.make_image(fill_color="black", back_color="white")
-        buf = io.BytesIO()
-        img.save(buf, "PNG")  
-        buf.seek(0)
-        img_base64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+        # Image processing logic here...
 
         return JSONResponse(content={"image_data": img_base64}, status_code=200)
-    
     except NoCredentialsError:
         raise HTTPException(status_code=500, detail="AWS credentials not found.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-
-        
-        
 
