@@ -46,8 +46,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize the instrumentator for Prometheus metrics
-instrumentator = Instrumentator()
+
+# Prometheus metrics initialization (directly in the app initialization)
+instrumentator = Instrumentator().instrument(app).expose(app)
+
 
 # Call this function when initializing your application
 create_bucket(bucket_name)
@@ -55,8 +57,9 @@ create_bucket(bucket_name)
 # Use the instrumentator to track metrics
 @app.on_event("startup")
 async def startup():
-    instrumentator.instrument(app).expose(app)
-
+    # Optional: log to confirm initialization
+    logger.info("Application has started")
+    
 # Pydantic model for text, email, and URL input
 class QRCodeData(BaseModel):
     data_type: str
