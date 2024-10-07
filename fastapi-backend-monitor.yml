@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app: backend
+      monitoring: enabled
   endpoints:
   - port: http   # This should match the 'name' in your Service ports
     path: /metrics
