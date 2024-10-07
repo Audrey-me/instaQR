@@ -16,5 +16,6 @@ spec:
       containers:
         - name: backend-container
           image: "${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/insta-backend:latest"
+          imagePullPolicy: Always
           ports:
             - containerPort: 8000
