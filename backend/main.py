@@ -48,7 +48,7 @@ app.add_middleware(
 
 
 # Prometheus metrics initialization (directly in the app initialization)
-instrumentator = Instrumentator().instrument(app).expose(app)
+instrumentator = Instrumentator().instrument(app).expose(app, endpoint="/metrics")
 
 
 # Call this function when initializing your application
