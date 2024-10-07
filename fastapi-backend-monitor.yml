@@ -9,8 +9,7 @@ spec:
     matchLabels:
       app: backend
   endpoints:
-  - port: http
-    targetPort: 8000
+  - port: http   # This should match the 'name' in your Service ports
     path: /metrics
     interval: 15s
     scrapeTimeout: 10s
